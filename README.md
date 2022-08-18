@@ -1,4 +1,4 @@
-# myvue3
+# ggProject
 
 ## Project setup
 ```
