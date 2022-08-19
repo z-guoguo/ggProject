@@ -1,5 +1,7 @@
 # ggProject
-
+```
+Vue + TS
+```
 ## Project setup
 ```
 npm install
