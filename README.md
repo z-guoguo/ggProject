@@ -1,5 +1,7 @@
-# myvue3
-
+# ggProject
+```
+Vue + TS
+```
 ## Project setup
 ```
 npm install

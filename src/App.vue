@@ -19,6 +19,9 @@ export default defineComponent({
         name: '组件生成器',
         code: 'builderView'
       },{
+        name: 'G6',
+        code: 'antV'
+      },{
         name: '测试',
         code: 'mainView'
       }],

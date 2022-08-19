@@ -1,22 +1,50 @@
 <template>
-    <div class="builderView">
-         <div class="builderView_left">
-            <div v-for="item in data.leftData" :key="item.code" :class="{rectangleStyle:item.code=='rectangle',prismaticStyle: item.code == 'prismatic'}" @dragstart="dragDiv($event,item)" draggable="true"></div>
-         </div>
-         <div class="builderView_right" @drop="dropEvent(data.currentData)" @dragover.prevent>
-            <!--  @mousedown="mousedownDiv" -->
-            <div v-for="(right,$index) in rightData" :key="$index" :style="{'margin-top':right.code == 'rectangle'&&$index!=0?'-6px':'0'}" :class="{rectangleStyle:right.code=='rectangle',prismaticStyle: right.code == 'prismatic',lineStyle: right.code == 'line',arrowStyle: right.code == 'arrow'}">
-                <input type="text" class="rightInput" v-if="right.code == 'rectangle'">
-            </div>
-         </div>
+  <div class="builderView">
+    <div class="builderView_left">
+      <div
+        v-for="item in data.leftData"
+        :key="item.code"
+        :class="{
+          rectangleStyle: item.code == 'rectangle',
+          prismaticStyle: item.code == 'prismatic',
+        }"
+        @dragstart="dragDiv($event, item)"
+        draggable="true"
+      ></div>
     </div>
+    <div
+      class="builderView_right"
+      @drop="dropEvent(data.currentData)"
+      @dragover.prevent
+    >
+      <!--  @mousedown="mousedownDiv" -->
+      <div
+        v-for="(right, $index) in rightData"
+        :key="$index"
+        :style="{
+          'margin-top': right.code == 'rectangle' && $index != 0 ? '-6px' : '0',
+        }"
+        :class="{
+          rectangleStyle: right.code == 'rectangle',
+          prismaticStyle: right.code == 'prismatic',
+          lineStyle: right.code == 'line',
+          arrowStyle: right.code == 'arrow',
+        }"
+      >
+        <input
+          type="text"
+          class="rightInput"
+          v-if="right.code == 'rectangle'"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, Ref, toRefs } from 'vue'
-
+import { defineComponent, reactive, ref, Ref, toRefs } from 'vue';
 export default defineComponent({
     name: 'builderView',
-    setup(props,ctx) {
+    setup(_props,_ctx) {
         type P = {
             name: string,
             code: string,
@@ -44,7 +72,7 @@ export default defineComponent({
         })
         //ref设置响应式数据
         const rightData: Ref<P[]> = ref([]);
-        const dragDiv = (event: any, item: never) => {
+        const dragDiv = (_event: any, item: never) => {
             data.currentData = item;
         }
         const dropEvent = (item:P) => {
@@ -99,87 +127,87 @@ export default defineComponent({
 </script>
 <style lang="less" scoped>
 .builderView {
-    display: flex;
+  display: flex;
+  height: 100%;
+  .builderView_left {
+    width: 300px;
     height: 100%;
-    .builderView_left {
-        width: 300px;
-        height: 100%;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        padding: 20px 0;
-        box-sizing: border-box;
-        .rectangleStyle {
-            width: 100px;
-            height: 50px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin: 0 auto;
-            cursor: pointer;
-            background-color: #fff;
-        }
-        .prismaticStyle {
-            width: 80px;
-            height: 80px;
-            transform: rotate(45deg);
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin: 0 auto;
-            cursor: pointer;
-            background-color: #fff;
-            margin-top: 50px;
-        }
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px 0;
+    box-sizing: border-box;
+    .rectangleStyle {
+      width: 100px;
+      height: 50px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin: 0 auto;
+      cursor: pointer;
+      background-color: #fff;
     }
-    .builderView_right {
-        flex: 1;
-        height: 100%;
-        margin-left: 10px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow: auto;
-        .rectangleStyle {
-            width: 100px;
-            min-height: 30px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin: 0 auto;
-            cursor: pointer;
-            background-color: #fff;
-            // padding: 10px 20px;
-            text-align: center;
-        }
-        .prismaticStyle {
-            width: 100px;
-            height: 100px;
-            transform: rotate(45deg);
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin: 0 auto;
-            cursor: pointer;
-            background-color: #fff;
-            text-align: center;
-            margin-top: 13px!important;
-        }
-        .lineStyle {
-            width: 2px;
-            height: 50px;
-            background-color: lightBlue;
-            margin: 0 auto;
-        }
-        .arrowStyle {
-            width: 0;
-            height: 0;
-            border: 6Px solid;
-            border-color: lightBlue transparent transparent transparent;
-            margin: 0 auto;
-        }
-        .rightInput {
-            width: 98%;
-            min-height: 30px;
-            border: none;
-            text-align: center;
-        }
+    .prismaticStyle {
+      width: 80px;
+      height: 80px;
+      transform: rotate(45deg);
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin: 0 auto;
+      cursor: pointer;
+      background-color: #fff;
+      margin-top: 50px;
     }
+  }
+  .builderView_right {
+    flex: 1;
+    height: 100%;
+    margin-left: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: auto;
+    .rectangleStyle {
+      width: 100px;
+      min-height: 30px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin: 0 auto;
+      cursor: pointer;
+      background-color: #fff;
+      // padding: 10px 20px;
+      text-align: center;
+    }
+    .prismaticStyle {
+      width: 100px;
+      height: 100px;
+      transform: rotate(45deg);
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin: 0 auto;
+      cursor: pointer;
+      background-color: #fff;
+      text-align: center;
+      margin-top: 13px !important;
+    }
+    .lineStyle {
+      width: 2px;
+      height: 50px;
+      background-color: lightBlue;
+      margin: 0 auto;
+    }
+    .arrowStyle {
+      width: 0;
+      height: 0;
+      border: 6px solid;
+      border-color: lightBlue transparent transparent transparent;
+      margin: 0 auto;
+    }
+    .rightInput {
+      width: 98%;
+      min-height: 30px;
+      border: none;
+      text-align: center;
+    }
+  }
 }
 </style>
