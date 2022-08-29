@@ -22,6 +22,12 @@ export default defineComponent({
         name: 'G6',
         code: 'antV'
       },{
+        name: 'X6',
+        code: 'antX'
+      },{
+        name: '个性化',
+        code: 'personaLise'
+      },{
         name: '测试',
         code: 'mainView'
       }],

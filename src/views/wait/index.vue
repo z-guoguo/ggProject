@@ -10,6 +10,15 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'mainView',
+  setup() {
+    const data = {
+      
+    }
+    
+    return {
+      data
+    }
+  }
 });
 </script>
 <style scoped>
