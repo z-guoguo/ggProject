@@ -3,6 +3,7 @@ import Wait from '../views/wait/index.vue'
 import BuilderView from '@/views/builderView/index.vue'
 import AntV from '@/views/antv/index.vue'
 import AntX from '@/views/antx/index.vue'
+import AnimationX6 from '@/views/animationX6/index.vue'
 import Personalise from '@/views/personalise/index.vue'
 
 const routes: Array<RouteRecordRaw> = [
@@ -27,6 +28,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'antX',
     component: AntX
     // component: (resolve) => require(['@/views/antx/index.vue'],resolve)
+  },
+  {
+    path: '/animationX6',
+    name: 'animationX6',
+    component: AnimationX6
   },
   // =========================================个性化
   {

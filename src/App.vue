@@ -25,6 +25,9 @@ export default defineComponent({
         name: 'X6',
         code: 'antX'
       },{
+        name: 'x6动画',
+        code: 'animationX6'
+      },{
         name: '个性化',
         code: 'personaLise'
       },{
