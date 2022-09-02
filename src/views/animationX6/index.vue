@@ -5,8 +5,8 @@
   </template>
   
   <script lang="ts">
-  import { createVNode, defineComponent, onMounted } from 'vue';
-import { Graph,Shape, Node, Path, Cell } from '@antv/x6'
+  import { createVNode, defineComponent, onMounted, onUnmounted, ref } from 'vue';
+import { Graph,Shape, Node, Path, Cell, Edge } from '@antv/x6'
 import '@antv/x6-vue-shape'
 import insertCss from 'insert-css'
 import Step from './components/step.vue'
@@ -25,6 +25,7 @@ import Step from './components/step.vue'
             status: 'default' | 'success' | 'failed' | 'running'
             label?: string
         }
+        let graph = ref<any>({}) // 流程图
         onMounted(()=> {
             const test = [
                 {
@@ -220,13 +221,7 @@ import Step from './components/step.vue'
                     status: 'failed',
                     },
                 ]];
-                 // 注册 vue 组件
-                // Graph.registerVueComponent('startNodeComponent', {
-                //     template: `<step></step>`,
-                //     components: {
-                //     Step
-                //     }
-                // }, true)
+                //创建vue组件节点
                 Graph.registerNode(
                     'dag-node',
                     {
@@ -235,7 +230,7 @@ import Step from './components/step.vue'
                         height: 36,
                         component:{
                             render: ()=> {
-                                return createVNode(Step)
+                                return createVNode(Step);//创建vue组件节点
                             }
                         },
                         ports: {
@@ -303,8 +298,7 @@ import Step from './components/step.vue'
                     },
                     true,
                 )
-            // initX6();
-            const graph: Graph = new Graph({
+            graph.value = new Graph({
                 container: document.getElementById('container')!,
                 panning: {
                     enabled: true,//开启拖拽平移
@@ -329,6 +323,16 @@ import Step from './components/step.vue'
                         },
                     },
                     },
+                    // 连线过程中，链接桩可以被链接时被使用
+                    // magnetAvailable: { // 高亮
+                    //     name: 'stroke',
+                    //     args: {
+                    //     attrs: {
+                    //         fill: '#fff',
+                    //         stroke: '#47C769',
+                    //     },
+                    //     },
+                    // },
                 },
                 connecting: {
                     snap: true,
@@ -342,15 +346,15 @@ import Step from './components/step.vue'
                         return magnet.getAttribute('port-group') !== 'top'
                     },
                     createEdge() {
-                    return graph.createEdge({
-                        shape: 'dag-edge',
-                        attrs: {
-                            line: {
-                                strokeDasharray: '5 5',
+                        return graph.value.createEdge({
+                            shape: 'dag-edge',
+                            attrs: {
+                                line: {
+                                    strokeDasharray: '5 5',
+                                },
                             },
-                        },
-                        zIndex: -1,
-                    })
+                            zIndex: -1,
+                        })
                     },
                 },
                 selecting: {
@@ -362,46 +366,58 @@ import Step from './components/step.vue'
                     rubberband: true,
                 },
             })
-            graph.centerContent();//将画布内容中心与视口中心对齐
+            graph.value.centerContent();//将画布内容中心与视口中心对齐
             // 创建元素和边
-            const rect = new Shape.Rect({
-                x: 100,
-                y: 200,
-                width: 80,
-                height: 40,
-                // angle: 90,//旋转节点角度
-                attrs: {//定制样式
-                    body: {
-                        fill: 'blue',//背景颜色
-                        stroke: '#000',  // 边框颜色
-                    },
-                    label: {
-                        text: 'rect',    // 文本
-                        fill: '#fff',    // 文字颜色
-                        fontSize: 13,    // 文字大小
-                    },
-                },
-            })
-            graph.addNode(rect)
+            // const rect = new Shape.Rect({
+            //     x: 100,
+            //     y: 200,
+            //     width: 80,
+            //     height: 40,
+            //     // angle: 90,//旋转节点角度
+            //     attrs: {//定制样式
+            //         body: {
+            //             fill: 'blue',//背景颜色
+            //             stroke: '#000',  // 边框颜色
+            //         },
+            //         label: {
+            //             text: 'rect',    // 文本
+            //             fill: '#fff',    // 文字颜色
+            //             fontSize: 13,    // 文字大小
+            //         },
+            //     },
+            // })
+            // graph.addNode(rect)
             // 初始化节点/边
             const init = (data: Cell.Metadata[]) => {
                 const cells: Cell[] = []
                 data.forEach((item) => {
                     if (item.shape === 'dag-node') {
-                        console.log(cells,'kk',item)
-                         cells.push(graph.createNode(item));
+                         cells.push(graph.value.createNode(item));
                      }else {
-                         cells.push(graph.createEdge(item));
+                         cells.push(graph.value.createEdge(item));
                     }
                 })
-                graph.resetCells(cells)
+                graph.value.resetCells(cells)
             }
             // 显示节点状态
             const showNodeStatus = async (statusList: NodeStatus[][]) => {
                 const status = statusList.shift()
                 status?.forEach((item) => {
                     const { id, status } = item
-                    const node = graph.getCellById(id)
+                    const node = graph.value.getCellById(id)
+                    const edges = graph.value.getIncomingEdges(node)
+                    edges?.forEach((edge:Edge) => {
+                        edge.attr({
+                            line: {
+                                sourceMarker: {
+                                    tagName: 'path',
+                                },
+                            },
+                        })
+                            //动线
+                            edge.attr('line/strokeDasharray', 5)
+                            edge.attr('line/style/animation', 'running-line 30s infinite linear')
+                    })
                     const data = node.getData() as NodeStatus
                     node.setData({
                         ...data,
@@ -416,9 +432,47 @@ import Step from './components/step.vue'
             // showNodeStatus(nodeStatusList)
             // graph.centerContent()
 
+            graph.value.on('cell:mouseenter', (args: { cell:any }) => {
+                // if (args.cell.isNode()) {
+                // args.cell.addTools([
+                //     {
+                //     name: 'boundary',
+                //     args: {
+                //         attrs: {
+                //         fill: '#7c68fc',
+                //         stroke: '#333',
+                //         'stroke-width': 1,
+                //         'fill-opacity': 0.2,
+                //         },
+                //     },
+                //     },
+                //     {
+                //     name: 'button-remove',
+                //     args: {
+                //         x: 0,
+                //         y: 0,
+                //         offset: { x: 10, y: 10 },
+                //     },
+                //     },
+                // ])
+                // } else {
+                // args.cell.addTools([
+                //     { name: 'vertices' },
+                //     {
+                //     name: 'button-remove',
+                //     args: { distance: 20  },
+                //     }])
+                // }
+            })
+            graph.value.on('cell:mouseleave', (args: { cell:any }) => {
+                // args.cell.removeTools()
+            })
+            
             
         })
-        
+        onUnmounted(() => {
+            graph.value.dispose() // 销毁画布
+        })
         return {
             data
         }

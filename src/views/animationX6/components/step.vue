@@ -1,10 +1,10 @@
 <template>
     <div class="step">
-        <div :className='["node", data.status]'>
-            <img :src='data.image.logo' />
-            <span className="label">{{data.label}}</span>
-            <span className="status">
-                <img :src=data.image.success />
+        <div :class='["node", data.status,"running"]'>
+            <img class="logo" :src='data.image.logo' />
+            <span class="label">{{data.label}}</span>
+            <span class="status">
+                <img :src=data.image.running />
             <!-- {{data.status === 'success'<img src={data.image.success} />}}
             {data.status === 'failed' && <img src={data.image.failed} />}
             {data.status === 'running' && <img src={data.image.running} />} -->
@@ -16,7 +16,6 @@
   
   <script lang="ts">
   import { defineComponent } from 'vue';
-  import { Graph } from '@antv/x6';
   
   
   export default defineComponent({
@@ -47,8 +46,12 @@
     width: 180px;
     text-align: left;
     height: 36px;
-    border: 1px solid #ddd;
+    line-height: 36px;
     margin: 0 auto;
+    text-align: center;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: #fff;
   }
   .node {
     position: relative;
@@ -59,8 +62,11 @@
   flex-shrink: 0;
   margin-left: 8px;
   position: absolute;
-  right: 0;
+  right: 6px;
   top: 10px;
+}
+.node img.logo {
+    left: 0px;
 }
 .node .label {
   display: inline-block;
@@ -69,6 +75,9 @@
   margin-left: 8px;
   color: #666;
   font-size: 12px;
+}
+.node.running img {
+  animation: spin 1s linear infinite;
 }
   </style>
   
